@@ -3,17 +3,19 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
+
 	"github.com/yichya/xray-geodata-cut/geoip"
 	"github.com/yichya/xray-geodata-cut/geosite"
 	"google.golang.org/protobuf/proto"
-	"strings"
 )
 
 func main() {
 	ft := flag.String("type", "", "GeoIP (geoip) or GeoSite (geosite)")
 	in := flag.String("in", "", "Path to GeoData file")
 	show := flag.Bool("show", false, "Print codes in GeoIP or GeoSite file")
-	search := flag.String("search", "", "Search GeoIP or GeoSite Item")
+	list := flag.String("list", "", "List GeoIP or Geo Site items of specified category")
+	search := flag.String("search", "", "Search GeoIP or GeoSite item")
 	keep := flag.String("keep", "cn,private,geolocation-!cn", "GeoIP or GeoSite codes to keep (private is always kept for GeoIP)")
 	trimipv6 := flag.Bool("trimipv6", false, "Trim all IPv6 ranges in GeoIP file")
 	out := flag.String("out", "", "Path to processed file")
@@ -31,10 +33,12 @@ func main() {
 			}
 			if *show {
 				fmt.Println(geoip.GetGeoIPCodes(gin))
+			} else if list != nil {
+				fmt.Println(geoip.ListCategoryItem(gin, *list))
 			} else if search != nil {
 				for _, x := range geoip.Search(gin, *search) {
 					fmt.Println(x)
-				}	
+				}
 			} else {
 				gout := geoip.CutGeoIPCodes(gin, strings.Split(*keep, ","), *trimipv6)
 				if err = geoip.SaveGeoIP(gout, *out); err != nil {
@@ -51,6 +55,8 @@ func main() {
 			}
 			if *show {
 				fmt.Println(geosite.GetGeoSiteCodes(gin))
+			} else if list != nil {
+				fmt.Println(geosite.ListCategoryItem(gin, *list))
 			} else if search != nil {
 				for _, x := range geosite.Search(gin, *search) {
 					fmt.Println(x)

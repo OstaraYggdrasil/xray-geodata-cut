@@ -11,7 +11,9 @@ Usage of xray-geodata-cut:
   -out string
         Path to processed file
   -search string
-        Search GeoIP or GeoSite Item
+        Search GeoIP or GeoSite item
+  -list string
+        List GeoIP or Geo Site item of specified category
   -show
         Print codes in GeoIP or GeoSite file
   -trimipv6
@@ -47,4 +49,6 @@ sh-5.1$ go run . -in /usr/local/share/xray/geosite.dat -type geosite -search www
 CATEGORY-ENTERTAINMENT
 GEOLOCATION-!CN
 NETFLIX
+sh-5.1$ go run . -in /usr/local/share/xray/geosite.dat -type geosite -list CATEGORY-GAMES
+[2k.com 2kcoretech.online 2kgames.com take2games.com blizzard.cn...]
 ```

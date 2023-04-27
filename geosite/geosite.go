@@ -1,10 +1,11 @@
 package geosite
 
 import (
-	"github.com/xtls/xray-core/app/router"
-	"google.golang.org/protobuf/proto"
 	"os"
 	"strings"
+
+	"github.com/xtls/xray-core/app/router"
+	"google.golang.org/protobuf/proto"
 )
 
 func LoadGeoSite(fn string) (*router.GeoSiteList, error) {
@@ -24,6 +25,20 @@ func GetGeoSiteCodes(in *router.GeoSiteList) []string {
 	for index, x := range in.GetEntry() {
 		result[index] = x.CountryCode
 	}
+	return result
+}
+
+func ListCategoryItem(gin *router.GeoSiteList, category string) []string {
+	var result []string
+	for _, site := range gin.Entry {
+		if site.CountryCode != category {
+			continue
+		}
+		for _, domain := range site.Domain {
+			result = append(result, domain.Value)
+		}
+	}
+
 	return result
 }
 

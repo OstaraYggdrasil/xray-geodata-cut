@@ -1,11 +1,12 @@
 package geoip
 
 import (
+	"os"
+	"strings"
+
 	"github.com/xtls/xray-core/app/router"
 	"github.com/xtls/xray-core/common/net"
 	"google.golang.org/protobuf/proto"
-	"os"
-	"strings"
 )
 
 func LoadGeoIP(fn string) (*router.GeoIPList, error) {
@@ -24,6 +25,19 @@ func GetGeoIPCodes(in *router.GeoIPList) []string {
 	result := make([]string, len(in.GetEntry()))
 	for index, x := range in.GetEntry() {
 		result[index] = x.CountryCode
+	}
+	return result
+}
+
+func ListCategoryItem(gin *router.GeoIPList, country string) []string {
+	var result []string
+	for _, geoip := range gin.Entry {
+		if geoip.CountryCode != country {
+			continue
+		}
+		for _, cidr := range geoip.Cidr {
+			result = append(result, net.IP(cidr.Ip).String())
+		}
 	}
 	return result
 }
